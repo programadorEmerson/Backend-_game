@@ -12,6 +12,7 @@ export const UserSchema = new mongoose.Schema({
   codeConfirmation: { type: Number },
   createdAt: { type: String },
   updatedAt: { type: String },
+  balance: { type: Number },
 });
 
 UserSchema.pre(ConstantsEnum.SAVE, async function (next) {
