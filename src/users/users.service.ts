@@ -14,6 +14,7 @@ import { AuthService } from 'src/auth/auth.service';
 
 import { ConstantsEnum } from 'src/enums/constants';
 import { ErrorsEnum } from 'src/enums/errors';
+import { FeatureCodeEnum } from 'src/enums/feature.code';
 
 import Email from 'src/services/email';
 
@@ -24,6 +25,7 @@ import { User } from 'src/users/models/users.model';
 import generateCodeConfirmation from 'src/utils/generateCodeConfirmation';
 import { keysSignup } from 'src/utils/keysToRemove';
 import { removeRestrictKeys } from 'src/utils/removeRestrictKeys';
+import returnFullRuleType from 'src/utils/returnFullRuleType';
 
 @Injectable()
 export class UsersService {
@@ -43,6 +45,7 @@ export class UsersService {
       codeConfirmation: codeConfirmation,
       createdAt: new Date().toISOString(),
       active: false,
+      balance: 0,
     });
     email.sendEmailConfirmation(signupDto.email, String(codeConfirmation));
     return removeRestrictKeys(await newUser.save(), keysSignup);
@@ -102,7 +105,7 @@ export class UsersService {
     }
     user.active = true;
     user.codeConfirmation = undefined;
-    user.rules = [];
+    user.rules = returnFullRuleType(FeatureCodeEnum.SHARED);
     return removeRestrictKeys(await user.save(), keysSignup);
   }
 

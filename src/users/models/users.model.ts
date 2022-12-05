@@ -10,4 +10,5 @@ export interface User extends Document {
   codeConfirmation: number;
   createdAt: string;
   updatedAt: string;
+  balance: number;
 }
