@@ -43,6 +43,7 @@ export class UsersService {
       codeConfirmation: codeConfirmation,
       createdAt: new Date().toISOString(),
       active: false,
+      balance: 0,
     });
     email.sendEmailConfirmation(signupDto.email, String(codeConfirmation));
     return removeRestrictKeys(await newUser.save(), keysSignup);
