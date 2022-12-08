@@ -50,6 +50,14 @@ export class UsersController {
     return await this.userServices.findAllUsers(String(requesterId));
   }
 
+  @Get(ConstantsEnum.ME)
+  @UseGuards(AuthGuard(ConstantsEnum.JWT))
+  @HttpCode(HttpStatus.OK)
+  public async me(@Query() request: { requesterId: string }): Promise<User> {
+    const { requesterId } = request;
+    return await this.userServices.me(String(requesterId));
+  }
+
   @Delete(`${ConstantsEnum.DELETE}/:${ConstantsEnum.ID}`)
   @UseGuards(AuthGuard(ConstantsEnum.JWT))
   @HttpCode(HttpStatus.OK)
@@ -57,13 +65,22 @@ export class UsersController {
     return await this.userServices.deleteUserById(id);
   }
 
-  @Patch(`${ConstantsEnum.UPDATE}`)
+  @Patch(`${ConstantsEnum.CONFIRM_CODE}`)
   @HttpCode(HttpStatus.OK)
   public async confirmCode(
     @Query(ConstantsEnum.EMAIL) email: string,
     @Query(ConstantsEnum.CODE) code: string,
   ): Promise<User> {
     return await this.userServices.confirmCode(email, code);
+  }
+
+  @Patch(`${ConstantsEnum.VERIFY_CODE}`)
+  @HttpCode(HttpStatus.OK)
+  public async validCode(
+    @Query(ConstantsEnum.EMAIL) email: string,
+    @Query(ConstantsEnum.CODE) code: string,
+  ): Promise<User | null> {
+    return await this.userServices.validCode(email, code);
   }
 
   @Patch(`${ConstantsEnum.RESEND_CODE}`)
@@ -78,7 +95,15 @@ export class UsersController {
   public async updateUser(
     @Body() userData: UpdateUserDto,
     @Param(ConstantsEnum.ID) id: string,
-  ): Promise<User> {
+  ): Promise<{ token: string; userInfo: User }> {
     return await this.userServices.updateUser(userData, id);
+  }
+
+  @Patch(`${ConstantsEnum.REDEFINE_PASSWORD}`)
+  @HttpCode(HttpStatus.OK)
+  public async redefinePassword(
+    @Query(ConstantsEnum.EMAIL) email: string,
+  ): Promise<{ token: string }> {
+    return await this.userServices.redefinePassword(email);
   }
 }

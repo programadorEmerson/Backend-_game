@@ -34,7 +34,9 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
-  public async signUp(signupDto: SignupUserDto): Promise<User> {
+  public async signUp(
+    signupDto: SignupUserDto,
+  ): Promise<{ token: string; userInfo: User }> {
     if (await this.userModel.findOne({ email: signupDto.email })) {
       throw new ConflictException(ErrorsEnum.USER_ALREADY_EXISTS);
     }
@@ -46,21 +48,32 @@ export class UsersService {
       createdAt: new Date().toISOString(),
       active: false,
       balance: 0,
+      urlImage: '/no-photo.png',
+      redefinePassword: false,
     });
     email.sendEmailConfirmation(signupDto.email, String(codeConfirmation));
-    return removeRestrictKeys(await newUser.save(), keysSignup);
+    const user = await newUser.save();
+    const token = await this.authService.createAccessToken(user._id);
+    return { token, userInfo: removeRestrictKeys<User>(user, keysSignup) };
   }
 
   public async signIn(
     signinDto: SigninUserDto,
   ): Promise<{ token: string; userInfo: User }> {
-    const user = await this.findByEmail(signinDto.email);
+    let user = await this.findByEmail(signinDto.email);
     const match = await this.checkPassword(signinDto.password, user);
     if (!match) {
       throw new NotFoundException(ErrorsEnum.INVALID_PASS_OR_EMAIL);
     }
     const token = await this.authService.createAccessToken(user._id);
-    return { token, userInfo: removeRestrictKeys(user, keysSignup) };
+    if (user.redefinePassword) {
+      user = Object.assign(user, {
+        codeConfirmation: undefined,
+        redefinePassword: false,
+      });
+      await user.save();
+    }
+    return { token, userInfo: removeRestrictKeys<User>(user, keysSignup) };
   }
 
   private async findByEmail(email: string): Promise<User> {
@@ -82,8 +95,16 @@ export class UsersService {
   public async findAllUsers(requesterId: string): Promise<User[]> {
     const users = await this.userModel.find();
     return users
-      .map((user) => removeRestrictKeys(user, keysSignup))
+      .map((user) => removeRestrictKeys<User>(user, keysSignup))
       .filter((user) => String(user._id) !== requesterId);
+  }
+
+  public async me(id: string): Promise<User> {
+    const user = await this.userModel.findById(id);
+    if (!user) {
+      throw new NotFoundException(ErrorsEnum.USER_NOT_FOUND);
+    }
+    return removeRestrictKeys<User>(user, keysSignup);
   }
 
   public async deleteUserById(id: string): Promise<User> {
@@ -92,7 +113,7 @@ export class UsersService {
       throw new NotFoundException(ErrorsEnum.USER_NOT_FOUND);
     }
     await this.userModel.findByIdAndDelete(id);
-    return removeRestrictKeys(user, keysSignup);
+    return removeRestrictKeys<User>(user, keysSignup);
   }
 
   public async confirmCode(email: string, code: string): Promise<User> {
@@ -106,7 +127,18 @@ export class UsersService {
     user.active = true;
     user.codeConfirmation = undefined;
     user.rules = returnFullRuleType(FeatureCodeEnum.SHARED);
-    return removeRestrictKeys(await user.save(), keysSignup);
+    return removeRestrictKeys<User>(await user.save(), keysSignup);
+  }
+
+  public async validCode(email: string, code: string): Promise<User | null> {
+    const user = await this.userModel.findOne({
+      email,
+      codeConfirmation: code,
+    });
+    if (!user) {
+      return null;
+    }
+    return user;
   }
 
   public async resendCode(email: string): Promise<User> {
@@ -122,15 +154,35 @@ export class UsersService {
     user.active = false;
     user.rules = [];
     emailService.sendEmailConfirmation(email, String(codeConfirmation));
-    return removeRestrictKeys(await user.save(), keysSignup);
+    return removeRestrictKeys<User>(await user.save(), keysSignup);
   }
 
-  public async updateUser(userData: UpdateUserDto, id: string): Promise<User> {
+  public async updateUser(
+    userData: UpdateUserDto,
+    id: string,
+  ): Promise<{ token: string; userInfo: User }> {
     let user = await this.userModel.findById(id);
     if (!user) {
       throw new BadRequestException(ErrorsEnum.USER_NOT_FOUND);
     }
     user = Object.assign(user, userData);
-    return removeRestrictKeys(await user.save(), keysSignup);
+
+    await user.save();
+    const token = await this.authService.createAccessToken(user._id);
+    return { token, userInfo: removeRestrictKeys<User>(user, keysSignup) };
+  }
+
+  public async redefinePassword(email: string): Promise<{ token: string }> {
+    let user = await this.findByEmail(email);
+    if (!user) {
+      throw new BadRequestException(ErrorsEnum.USER_NOT_FOUND);
+    }
+    const emailService = new Email();
+    const codeConfirmation = generateCodeConfirmation();
+    emailService.sendEmailConfirmation(email, String(codeConfirmation));
+    user = Object.assign(user, { codeConfirmation, redefinePassword: true });
+    const token = await this.authService.createAccessToken(user._id, true);
+    await user.save();
+    return { token };
   }
 }
