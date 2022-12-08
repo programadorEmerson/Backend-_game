@@ -20,15 +20,18 @@ export class AuthService {
     @InjectModel(ConstantsEnum.USER) private readonly userModel: Model<User>,
   ) {}
 
-  public async createAccessToken(userId: string): Promise<string> {
-    const payload = { userId };
+  public async createAccessToken(
+    _id: string,
+    redefinePassword?: boolean,
+  ): Promise<string> {
+    const payload = { _id, redefinePassword };
     return sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRATION,
     });
   }
 
   public async validateUser(jwtPayload: JwtPayload): Promise<User> {
-    const user = await this.userModel.findOne({ _id: jwtPayload.userId });
+    const user = await this.userModel.findOne({ _id: jwtPayload._id });
 
     if (!user) {
       throw new UnauthorizedException(ErrorsEnum.USER_NOT_FOUND);
@@ -55,8 +58,7 @@ export class AuthService {
       token = credentials;
     }
     const idExtracted = verify(token, process.env.JWT_SECRET) as JwtPayload;
-    console.log('idExtracted', idExtracted.userId);
-    req.query[ConstantsEnum.Requester_ID] = idExtracted.userId;
+    req.query[ConstantsEnum.Requester_ID] = idExtracted._id;
     return token;
   };
 

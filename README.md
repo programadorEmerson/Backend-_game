@@ -58,6 +58,22 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+```bash
+# arquivo .env
+
+MONGO_URI=mongodb://localhost:27017/app-name
+JWT_SECRET=aqui-vai-a-senha
+ENCRIPT_JWT_SECRET=aqui-vai-a-senha
+FRONT_URL=http://localhost:3000
+LOGO_EMAIL_URL=https://eliasesquadriasdealuminio.com.br/wp-content/uploads/sites/58/2020/12/seu-logo-aqui-1.png
+SERVER_UMBLER=smtp.umbler.com
+EMAIL_REF=email@email.com.br
+PASS_EMAIL_REF=senha-do-email
+APP_NAME=AppName
+JWT_EXPIRATION=1d
+PORT=5050
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

@@ -11,4 +11,6 @@ export interface User extends Document {
   createdAt: string;
   updatedAt: string;
   balance: number;
+  urlImage: string;
+  redefinePassword: boolean;
 }

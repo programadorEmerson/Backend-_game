@@ -13,6 +13,8 @@ export const UserSchema = new mongoose.Schema({
   createdAt: { type: String },
   updatedAt: { type: String },
   balance: { type: Number },
+  urlImage: { type: String },
+  redefinePassword: { type: Boolean },
 });
 
 UserSchema.pre(ConstantsEnum.SAVE, async function (next) {

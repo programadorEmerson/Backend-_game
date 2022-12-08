@@ -511,10 +511,10 @@ a {text-decoration: none;}
                                                                             .env
                                                                             .APP_NAME
                                                                         },
-                                                                        recebemos seu pedido de cadastro. Esta é uma
+                                                                        recebemos sua solicitação pela platadorma. Esta é uma
                                                                         mensagem de confirmação e não é necessário
                                                                         respondê-la, utilize o código abaixo para
-                                                                        ativar o seu cadastro na plataforma.</p><br/><br/>
+                                                                        para prosseguir com a ativação.</p><br/><br/>
                                                                     <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:50px;color:#333333;font-size:25px;text-align:center">
                                                                         <strong>Seu código de ativação</strong></p>
@@ -525,37 +525,6 @@ a {text-decoration: none;}
                                                                                 style="font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:27px"></span></strong>
                                                                     </h1>
                                                                 </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="left"
-                                            style="padding:0;Margin:0;padding-bottom:10px;padding-left:20px;padding-right:20px">
-                                            <table cellpadding="0" cellspacing="0" width="100%"
-                                                style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-                                                <tr>
-                                                    <td align="center" valign="top"
-                                                        style="padding:0;Margin:0;width:570px">
-                                                        <table cellpadding="0" cellspacing="0" width="100%"
-                                                            role="presentation"
-                                                            style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-                                                            <tr>
-                                                                <td align="center"
-                                                                    style="padding:0;Margin:0;padding-bottom:10px;padding-top:15px">
-                                                                    <span class="es-button-border"
-                                                                        style="border-style:solid;border-color:#000000;background:#000000;border-width:2px;display:inline-block;border-radius:5px;width:auto"><a
-                                                                            href="${
-                                                                              process
-                                                                                .env
-                                                                                .FRONT_URL
-                                                                            }/signup" class="es-button es-button-1"
-                                                                            target="_blank"
-                                                                            style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:20px;border-style:solid;border-color:#000000;border-width:10px 30px;display:inline-block;background:#000000;border-radius:5px;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:normal;font-style:normal;line-height:24px;width:auto;text-align:center">Clique
-                                                                            aqui para informar o código</a></span></td>
                                                             </tr>
                                                         </table>
                                                     </td>

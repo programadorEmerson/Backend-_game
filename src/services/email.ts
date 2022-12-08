@@ -26,7 +26,6 @@ class Email {
       to: email,
       html: emailConfirmation(code),
     });
-    console.log(ConstantsEnum.SUCESS_SEND_EMAIL);
   };
 }
 
